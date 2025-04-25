@@ -1,0 +1,297 @@
+import type { Metadata } from "next"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react"
+
+export const metadata: Metadata = {
+  title: "Blog Post - Outlive",
+  description: "Health and wellness blog article",
+}
+
+// Sample blog posts data
+const blogPosts = [
+  {
+    id: "1",
+    title: "Understanding Macronutrients",
+    description: "A comprehensive guide to proteins, carbs, and fats in your diet",
+    category: "Nutrition",
+    type: "article",
+    readTime: "10 min",
+    date: "May 15, 2025",
+    author: "Dr. Sarah Johnson",
+    image: "/vibrant-healthy-spread.png",
+    content: `
+      <h2>What Are Macronutrients?</h2>
+      <p>Macronutrients are the nutrients that your body needs in large amounts to function properly. They include proteins, carbohydrates, and fats. Each macronutrient plays a unique role in your body and provides a different amount of energy (calories).</p>
+      
+      <h3>Proteins</h3>
+      <p>Proteins are essential for building and repairing tissues, making enzymes and hormones, and supporting immune function. They are made up of amino acids, which are the building blocks of protein.</p>
+      <p>Good sources of protein include:</p>
+      <ul>
+        <li>Lean meats (chicken, turkey, beef)</li>
+        <li>Fish and seafood</li>
+        <li>Eggs</li>
+        <li>Dairy products (milk, yogurt, cheese)</li>
+        <li>Plant-based sources (beans, lentils, tofu, tempeh)</li>
+        <li>Nuts and seeds</li>
+      </ul>
+      
+      <h3>Carbohydrates</h3>
+      <p>Carbohydrates are your body's primary source of energy. They are broken down into glucose, which is used by your cells for energy.</p>
+      <p>There are two main types of carbohydrates:</p>
+      <ul>
+        <li><strong>Simple carbohydrates:</strong> These are quickly digested and can cause rapid spikes in blood sugar. Examples include sugar, honey, and fruit juice.</li>
+        <li><strong>Complex carbohydrates:</strong> These take longer to digest and provide a more sustained release of energy. Examples include whole grains, vegetables, and legumes.</li>
+      </ul>
+      
+      <h3>Fats</h3>
+      <p>Fats are essential for hormone production, brain function, and the absorption of fat-soluble vitamins. They also provide insulation and protection for your organs.</p>
+      <p>There are several types of fats:</p>
+      <ul>
+        <li><strong>Unsaturated fats:</strong> These are generally considered healthy and can be found in foods like olive oil, avocados, and nuts.</li>
+        <li><strong>Saturated fats:</strong> These are found in animal products and some plant oils. They should be consumed in moderation.</li>
+        <li><strong>Trans fats:</strong> These are artificially created fats that are harmful to health and should be avoided.</li>
+      </ul>
+      
+      <h2>Balancing Your Macronutrients</h2>
+      <p>The right balance of macronutrients depends on your individual needs, goals, and preferences. However, a general guideline is:</p>
+      <ul>
+        <li><strong>Proteins:</strong> 10-35% of daily calories</li>
+        <li><strong>Carbohydrates:</strong> 45-65% of daily calories</li>
+        <li><strong>Fats:</strong> 20-35% of daily calories</li>
+      </ul>
+      
+      <p>Remember, the quality of your macronutrients is just as important as the quantity. Focus on whole, nutrient-dense foods to get the most benefit from your diet.</p>
+    `,
+  },
+  {
+    id: "2",
+    title: "15-Minute Home Workout",
+    description: "Quick effective exercises you can do without equipment",
+    category: "Fitness",
+    type: "video",
+    readTime: "5 min",
+    date: "May 12, 2025",
+    author: "Coach David Miller",
+    image: "/diverse-fitness-group.png",
+    videoUrl: "https://example.com/workout-video",
+    content: `
+      <h2>Quick and Effective Home Exercises</h2>
+      <p>This 15-minute workout requires no equipment and can be done in a small space. It's designed to get your heart rate up and work multiple muscle groups efficiently.</p>
+      
+      <div class="aspect-video w-full bg-muted rounded-lg mb-6 flex items-center justify-center">
+        <p class="text-muted-foreground">Video Player</p>
+      </div>
+      
+      <h2>Warm-Up (2 minutes)</h2>
+      <ul>
+        <li>30 seconds of marching in place</li>
+        <li>30 seconds of arm circles</li>
+        <li>30 seconds of hip rotations</li>
+        <li>30 seconds of light jumping jacks</li>
+      </ul>
+      
+      <h2>Main Workout (12 minutes)</h2>
+      <p>Perform each exercise for 45 seconds, followed by 15 seconds of rest. Complete the circuit twice.</p>
+      
+      <h3>1. Bodyweight Squats</h3>
+      <p>Stand with feet shoulder-width apart, lower your body as if sitting in a chair, then return to standing.</p>
+      
+      <h3>2. Push-Ups (or Modified Push-Ups)</h3>
+      <p>Start in a plank position, lower your chest to the floor, then push back up. For a modified version, keep your knees on the ground.</p>
+      
+      <h3>3. Lunges</h3>
+      <p>Step forward with one leg, lowering your hips until both knees are bent at about 90 degrees. Alternate legs.</p>
+      
+      <h3>4. Mountain Climbers</h3>
+      <p>Start in a plank position and alternate bringing each knee toward your chest in a running motion.</p>
+      
+      <h3>5. Plank</h3>
+      <p>Hold a forearm plank position, keeping your body in a straight line from head to heels.</p>
+      
+      <h3>6. Jumping Jacks</h3>
+      <p>Jump while spreading your legs and bringing your arms above your head, then return to standing with arms at sides.</p>
+      
+      <h2>Cool Down (1 minute)</h2>
+      <p>Finish with some gentle stretching for your major muscle groups, holding each stretch for 15-20 seconds.</p>
+      
+      <h2>Benefits of This Workout</h2>
+      <p>This quick workout offers several benefits:</p>
+      <ul>
+        <li>Improves cardiovascular health</li>
+        <li>Builds strength in major muscle groups</li>
+        <li>Increases flexibility and mobility</li>
+        <li>Burns calories efficiently</li>
+        <li>Can be done anywhere, anytime</li>
+      </ul>
+      
+      <p>Remember to listen to your body and modify exercises as needed. Consistency is key - even short workouts like this can lead to significant improvements in fitness when done regularly.</p>
+    `,
+  },
+  {
+    id: "3",
+    title: "Mindfulness Meditation Guide",
+    description: "Simple techniques to practice mindfulness in your daily life",
+    category: "Mental Health",
+    type: "article",
+    readTime: "7 min",
+    date: "June 1, 2025",
+    author: "Dr. Emily Chen",
+    image: "/serene-meditation.png",
+    content: `
+      <h2>Introduction to Mindfulness</h2>
+      <p>Mindfulness is the practice of being fully present and engaged in the moment, aware of your thoughts and feelings without distraction or judgment. Regular mindfulness practice has been shown to reduce stress, improve focus, and enhance overall well-being.</p>
+      
+      <h2>Basic Mindfulness Techniques</h2>
+      
+      <h3>1. Mindful Breathing</h3>
+      <p>One of the simplest ways to practice mindfulness is to focus on your breath:</p>
+      <ul>
+        <li>Find a comfortable seated position</li>
+        <li>Close your eyes or maintain a soft gaze</li>
+        <li>Breathe naturally through your nose</li>
+        <li>Notice the sensation of air entering and leaving your body</li>
+        <li>When your mind wanders (which is normal), gently bring your attention back to your breath</li>
+        <li>Start with 5 minutes and gradually increase the duration</li>
+      </ul>
+      
+      <h3>2. Body Scan Meditation</h3>
+      <p>This practice involves paying attention to parts of your body and bodily sensations in a gradual sequence:</p>
+      <ul>
+        <li>Lie down or sit comfortably</li>
+        <li>Focus your attention on different parts of your body, starting from your feet and moving up to your head</li>
+        <li>Notice any sensations, tension, or discomfort without trying to change anything</li>
+        <li>Breathe into any areas of tension or discomfort, allowing them to soften</li>
+      </ul>
+      
+      <h3>3. Mindful Walking</h3>
+      <p>Walking meditation is a way to practice mindfulness in motion:</p>
+      <ul>
+        <li>Find a quiet place where you can walk back and forth</li>
+        <li>Walk at a natural pace, slower than usual</li>
+        <li>Pay attention to the lifting, moving, and placing of each foot</li>
+        <li>Notice the sensations in your feet and legs</li>
+        <li>When your mind wanders, gently bring your attention back to the sensations of walking</li>
+      </ul>
+      
+      <h2>Incorporating Mindfulness Into Daily Life</h2>
+      <p>Beyond formal meditation, you can practice mindfulness throughout your day:</p>
+      <ul>
+        <li><strong>Mindful eating:</strong> Pay full attention to the experience of eating, noticing colors, smells, flavors, and textures</li>
+        <li><strong>Mindful listening:</strong> Give your full attention when someone is speaking, without planning what you'll say next</li>
+        <li><strong>Mindful observation:</strong> Take time to notice details in your environment that you normally overlook</li>
+        <li><strong>Mindful pauses:</strong> Take brief moments throughout the day to check in with yourself and notice your thoughts, feelings, and bodily sensations</li>
+      </ul>
+      
+      <h2>Benefits of Regular Practice</h2>
+      <p>Research has shown that regular mindfulness practice can:</p>
+      <ul>
+        <li>Reduce stress and anxiety</li>
+        <li>Improve focus and concentration</li>
+        <li>Enhance emotional regulation</li>
+        <li>Boost immune function</li>
+        <li>Improve sleep quality</li>
+        <li>Increase self-awareness and compassion</li>
+      </ul>
+      
+      <p>Remember that mindfulness is a skill that develops with practice. Be patient with yourself and approach your practice with curiosity rather than judgment.</p>
+    `,
+  },
+]
+
+export default function BlogPostPage({ params }: { params: { id: string } }) {
+  const post = blogPosts.find((post) => post.id === params.id) || blogPosts[0]
+
+  // Get related posts (same category, excluding current post)
+  const relatedPosts = blogPosts.filter((p) => p.category === post.category && p.id !== post.id).slice(0, 3)
+
+  return (
+    <div className="container mx-auto px-4 py-8 space-y-6 max-w-4xl">
+      {/* 1. Heading */}
+      <div>
+        <Button variant="outline" size="sm" asChild className="mb-6">
+          <Link href="/content/blog">
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Back to Blog
+          </Link>
+        </Button>
+
+        <h1 className="text-3xl font-bold tracking-tight mb-3">{post.title}</h1>
+
+        <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground mb-6">
+          <div className="flex items-center gap-1">
+            <Calendar className="h-4 w-4" />
+            {post.date}
+          </div>
+          <div className="flex items-center gap-1">
+            <User className="h-4 w-4" />
+            {post.author}
+          </div>
+          <div className="flex items-center gap-1">
+            <Clock className="h-4 w-4" />
+            {post.readTime} read
+          </div>
+          <span className="rounded-full bg-outlive-green-200 px-2 py-0.5 text-xs text-outlive-green-600 dark:bg-outlive-green-900/40 dark:text-outlive-green-300">
+            {post.category}
+          </span>
+        </div>
+      </div>
+
+      {/* 2. Image/Video/PDF */}
+      {post.type === "video" ? (
+        <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+          <div className="w-full h-full flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+            <p className="text-muted-foreground">Video Player</p>
+          </div>
+        </div>
+      ) : (
+        <div className="aspect-video w-full bg-muted rounded-lg overflow-hidden">
+          <img src={post.image || "/placeholder.svg"} alt={post.title} className="w-full h-full object-cover" />
+        </div>
+      )}
+
+      {/* 3. Content */}
+      <Card className="bg-white dark:bg-gray-800 border-0 shadow-sm">
+        <CardContent className="p-6 md:p-8">
+          <div
+            className="prose prose-green max-w-none dark:prose-invert"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          ></div>
+        </CardContent>
+      </Card>
+
+      {/* 4. Related Posts */}
+      {relatedPosts.length > 0 && (
+        <div className="border-t pt-8">
+          <h2 className="text-xl font-semibold mb-6">Related Articles</h2>
+          <div className="grid gap-6 md:grid-cols-3">
+            {relatedPosts.map((relatedPost) => (
+              <Link key={relatedPost.id} href={`/content/blog/${relatedPost.id}`} className="block h-full">
+                <Card className="overflow-hidden h-full hover:shadow-md transition-all bg-white dark:bg-gray-800">
+                  <div className="aspect-video w-full bg-muted">
+                    <img
+                      src={relatedPost.image || "/placeholder.svg"}
+                      alt={relatedPost.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <h3 className="font-semibold mb-2 line-clamp-1">{relatedPost.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{relatedPost.description}</p>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="rounded-full bg-outlive-green-200 px-2 py-0.5 text-outlive-green-600 dark:bg-outlive-green-900/40 dark:text-outlive-green-300">
+                        {relatedPost.type === "video" ? "Video" : "Article"}
+                      </span>
+                      <span className="text-muted-foreground">{relatedPost.readTime} read</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
