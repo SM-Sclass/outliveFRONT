@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Public routes that don't need authentication
-    const publicRoutes = ['/login', '/api/auth/login', '/api/auth/token'];
+    const publicRoutes = ['/auth/login','/auth/signup', '/api/auth/login', '/api/auth/signup', '/api/auth/token'];
 
     // Allow public routes without token
     if (publicRoutes.includes(pathname)) {
@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
 
     // Check authentication for protected pages
     if (!token) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        return NextResponse.redirect(new URL('/auth/login', request.url));
     }
 
     return NextResponse.next();
