@@ -10,44 +10,88 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useToast } from "../ui/use-toast"
+import { useMutation } from "@tanstack/react-query"
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters long.",
-  }),
-  rememberMe: z.boolean().default(false),
-})
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
+  rememberMe: z.boolean().optional(), // added rememberMe here
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+const login = async (data: { email: string; password: string }) => {
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error response from server:", errorData);
+      throw new Error(errorData.message || "Login failed");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error in login function:", error);
+    throw new Error("Login failed");
+  }
+}
 
 export function LoginForm() {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast();
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: false,
+      rememberMe: false, // default false
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      // Redirect to dashboard
-      router.push("/dashboard")
-    }, 1000)
-  }
+  const loginMutation = useMutation({
+    mutationFn: (data: { email: string; password: string }) => login(data),
+    onSuccess: (data) => {
+      toast({
+        description: "Login successful!",
+      });
+      router.push("/dashboard");
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+        description: error.message || "An error occurred",
+      });
+    },
+  });
+
+  const handleSubmit = (data: LoginFormValues) => {
+    try {
+      console.log("Form data:", data);
+      loginMutation.mutate({ email: data.email, password: data.password });
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+      toast({
+        variant: "destructive",
+        title: "Login failed",
+      });
+    }
+  };
+
 
   return (
     <div className="space-y-4">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="email"
@@ -59,7 +103,6 @@ export function LoginForm() {
                     placeholder="example@outlive.com"
                     type="email"
                     autoComplete="email"
-                    disabled={isLoading}
                     className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
                     {...field}
                   />
@@ -87,7 +130,6 @@ export function LoginForm() {
                     placeholder="••••••••"
                     type="password"
                     autoComplete="current-password"
-                    disabled={isLoading}
                     className="bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
                     {...field}
                   />
@@ -105,23 +147,24 @@ export function LoginForm() {
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
-                    disabled={isLoading}
                     className="border-gray-300 dark:border-gray-600"
                   />
                 </FormControl>
-                <FormLabel className="text-sm font-normal text-gray-600 dark:text-gray-400">Remember me</FormLabel>
+                <FormLabel className="text-sm font-normal text-gray-600 dark:text-gray-400">
+                  Remember me
+                </FormLabel>
               </FormItem>
             )}
           />
           <Button
             type="submit"
             className="w-full bg-premium-primary hover:bg-premium-secondary text-white"
-            disabled={isLoading}
+
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            Login
           </Button>
         </form>
       </Form>
     </div>
-  )
+  );
 }

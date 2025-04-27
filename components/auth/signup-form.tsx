@@ -9,52 +9,109 @@ import { Button } from "@/components/ui/button"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useMutation } from "@tanstack/react-query"
+import { useToast } from "../ui/use-toast"
 
-const formSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters long",
-    }),
-    email: z.string().email({
-      message: "Please enter a valid email address",
-    }),
-    password: z.string().min(8, {
-      message: "Password must be at least 8 characters long",
-    }),
-    confirmPassword: z.string(),
-    acceptTerms: z.boolean().refine((val) => val === true, {
-      message: "You must accept the terms and conditions to continue",
-    }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  })
+// 1. Updated Zod Schema (no confirmPassword)
+const signUpSchema = z.object({
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters long",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address",
+  }),
+  phone: z.string().min(8, {
+    message: "Phone number must be at least 8 digits",
+  }),
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters",
+  }),
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "You must accept the terms and conditions to continue",
+  }),
+})
+
+type SignUpFormValues = z.infer<typeof signUpSchema>;
+
+// 2. API call
+const signup = async (data: { name: string; email: string; phone: string; password: string }) => {
+  try {
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error response from server:", errorData);
+      throw new Error(errorData.message || "Signup failed");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Error in signup function:", error);
+    throw new Error("Signup failed");
+  }
+}
 
 export function SignupForm() {
   const router = useRouter()
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false)
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       email: "",
+      phone: "",
       password: "",
-      confirmPassword: "",
       acceptTerms: false,
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      // Redirect to eligibility assessment
-      router.push("/eligibility-assessment")
-    }, 1000)
-  }
+  const signUpMutation = useMutation({
+    mutationFn: (data: { name: string; email: string; phone: string; password: string }) => signup(data),
+    onSuccess: () => {
+      toast({
+        description: "Account created successfully! Please login.",
+      });
+      router.push("/auth/login"); 
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Signup failed",
+        description: error.message || "An error occurred",
+      });
+    },
+  });
+
+  const onSubmit = (data: SignUpFormValues) => {
+    try {
+      setIsLoading(true);
+      console.log("Signup Form data:", data);
+
+      signUpMutation.mutate({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+      });
+
+    } catch (error) {
+      console.error("Error in onSubmit:", error);
+      toast({
+        variant: "destructive",
+        title: "Signup failed",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -94,16 +151,16 @@ export function SignupForm() {
           />
           <FormField
             control={form.control}
-            name="password"
+            name="phone"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>Phone Number</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder="••••••••"
-                    type="password"
+                    placeholder="1234567890"
+                    type="tel"
                     disabled={isLoading}
-                    autoComplete="new-password"
+                    autoComplete="tel"
                     {...field}
                   />
                 </FormControl>
@@ -113,10 +170,10 @@ export function SignupForm() {
           />
           <FormField
             control={form.control}
-            name="confirmPassword"
+            name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
                   <Input
                     placeholder="••••••••"
