@@ -14,6 +14,7 @@ import { QuestionStep } from "./steps/question-step"
 import { formQuestions } from "./form-questions"
 import { saveFormData, loadFormData } from "@/lib/form-storage"
 import * as React from "react"
+import { useMutation } from "@tanstack/react-query"
 
 // Define the form data structure
 export type FormData = {
@@ -21,11 +22,13 @@ export type FormData = {
   name: string
   email: string
   phone: string
-
-  // Question 1-39
   address: string
-  occupation: string
-  maritalStatus: string
+  age: number
+  gender: string
+  blood_group: string
+  weight: number
+  height: number
+  bmi: number
   medicalConditions: string[]
   symptoms: string[]
   otherMedicalConditions: string
@@ -39,31 +42,6 @@ export type FormData = {
   triglycerideLevel: string
   fastingGlucose: string
   hdlCholesterol: string
-  weightLossHistory: string
-  weightLossMotivation: string[]
-  otherMotivation: string
-  pastDietSuccess: string[]
-  exerciseFrequency: string
-  difficultFoods: string[]
-  portionControl: string
-  eatingHabits: string[]
-  overeatingTriggers: string[]
-  sleepQuality: string
-  energyLevel: string
-  alcoholConsumption: string
-  smokingStatus: string
-  exerciseType: string[]
-  otherExerciseType: string
-  eatingHabitsHealthy: string
-  stressLevel: string
-  foodChoiceFactors: string[]
-  livingArrangement: string
-  workSchedule: string
-  beverages: string[]
-  mealsPerDay: string
-  snacksPerDay: string
-  lateNightEating: string
-  hasScale: string
 }
 
 // Initialize empty form data
@@ -72,8 +50,12 @@ const initialFormData: FormData = {
   email: "",
   phone: "",
   address: "",
-  occupation: "",
-  maritalStatus: "",
+  age: 0,
+  gender: "",
+  blood_group: "",
+  weight: 0,
+  height: 0,
+  bmi: 0,
   medicalConditions: [],
   symptoms: [],
   otherMedicalConditions: "",
@@ -87,31 +69,7 @@ const initialFormData: FormData = {
   triglycerideLevel: "",
   fastingGlucose: "",
   hdlCholesterol: "",
-  weightLossHistory: "",
-  weightLossMotivation: [],
-  otherMotivation: "",
-  pastDietSuccess: [],
-  exerciseFrequency: "",
-  difficultFoods: [],
-  portionControl: "",
-  eatingHabits: [],
-  overeatingTriggers: [],
-  sleepQuality: "",
-  energyLevel: "",
-  alcoholConsumption: "",
-  smokingStatus: "",
-  exerciseType: [],
-  otherExerciseType: "",
-  eatingHabitsHealthy: "",
-  stressLevel: "",
-  foodChoiceFactors: [],
-  livingArrangement: "",
-  workSchedule: "",
-  beverages: [],
-  mealsPerDay: "",
-  snacksPerDay: "",
-  lateNightEating: "",
-  hasScale: "",
+
 }
 
 export function HealthAssessmentForm() {
@@ -252,40 +210,84 @@ export function HealthAssessmentForm() {
     }
   }
 
-  // Handle form submission
+  // Mutation for submitting patient data
+  const createPatientMutation = useMutation({
+    mutationFn: async (payload: any) => {
+      const response = await fetch("/api/patient", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit health assessment");
+      }
+
+      return response.json();
+    },
+  });
   const handleFinalSubmit = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
-      const finalFormData = getValues()
-      // Save the final data
-      await saveFormData({
-        data: finalFormData,
-        step: totalSteps,
-        timestamp: new Date().toISOString(),
-        completed: true,
-      })
+      const finalFormData = getValues();
+
+      const payload = {
+        name: finalFormData.name,
+        email: finalFormData.email,
+        phone: "+91" + finalFormData.phone,
+        address: finalFormData.address,
+        age: Number(finalFormData.age),
+        gender: finalFormData.gender,
+        blood_group: finalFormData.blood_group,
+        height: Number(finalFormData.height),
+        weight: Number(finalFormData.weight),
+        bmi: Number(finalFormData.bmi),
+        status: "Pending", // Mandatory field
+        form_data: {
+          medicalConditions: finalFormData.medicalConditions,
+          symptoms: finalFormData.symptoms,
+          otherMedicalConditions: finalFormData.otherMedicalConditions,
+          takingMedications: finalFormData.takingMedications,
+          medicationsTaken: finalFormData.medicationsTaken,
+          healthConditions: finalFormData.healthConditions,
+          hadSurgeries: finalFormData.hadSurgeries,
+          normalHeartExam: finalFormData.normalHeartExam,
+          bloodPressure: finalFormData.bloodPressure,
+          waistCircumference: finalFormData.waistCircumference,
+          triglycerideLevel: finalFormData.triglycerideLevel,
+          fastingGlucose: finalFormData.fastingGlucose,
+          hdlCholesterol: finalFormData.hdlCholesterol,
+        },
+      };
+
+      await createPatientMutation.mutateAsync(payload);
 
       toast({
         title: "Assessment Completed",
         description: "Thank you for completing the health assessment.",
         variant: "default",
-      })
+      });
 
-      // Redirect to dashboard or confirmation page
       setTimeout(() => {
-        router.push("/dashboard")
-      }, 1500)
+        router.push("/dashboard");
+      }, 1500);
+
     } catch (error) {
-      console.error("Error submitting form:", error)
+      console.error("Error submitting form:", error);
       toast({
         title: "Error Submitting Assessment",
-        description: "We couldn't submit your assessment. Please try again.",
+        description: (error as Error).message || "Something went wrong. Please try again.",
         variant: "destructive",
-      })
-      setIsSubmitting(false)
+      });
+      setIsSubmitting(false);
     }
-  }
+  };
+
+
 
   // Calculate progress percentage
   const progress = ((currentStep + 1) / totalSteps) * 100
