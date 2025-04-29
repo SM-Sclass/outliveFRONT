@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
     try {
         const { email, password } = await request.json();
-        const response = await fetch(`${process.env.NEST_ENDPOINT}/auth/login`, {
+        const response = await fetch(`${process.env.NEST_ENDPOINT}/admin/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

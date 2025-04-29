@@ -22,6 +22,7 @@ export type FormData = {
   name: string
   email: string
   phone: string
+  password: string
   address: string
   age: number
   gender: string
@@ -49,6 +50,7 @@ const initialFormData: FormData = {
   name: "",
   email: "",
   phone: "",
+  password: "",
   address: "",
   age: 0,
   gender: "",
@@ -238,6 +240,7 @@ export function HealthAssessmentForm() {
       const payload = {
         name: finalFormData.name,
         email: finalFormData.email,
+        password: finalFormData.password,
         phone: "+91" + finalFormData.phone,
         address: finalFormData.address,
         age: Number(finalFormData.age),

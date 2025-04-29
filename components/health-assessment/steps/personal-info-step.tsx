@@ -26,6 +26,17 @@ export function PersonalInfoStep({ isReadOnly = false }: { isReadOnly?: boolean 
           />
           {errors.name && <p className="text-sm text-destructive mt-1">{errors.name.message}</p>}
         </div>
+        <div className="space-y-2">
+          <Label htmlFor="password">Enter a Strong Password</Label>
+          <Input
+            id="password"
+            placeholder="John Doe"
+            {...register("password", { required: "Password is required" })}
+            disabled={isReadOnly}
+            className={isReadOnly ? "bg-muted" : ""}
+          />
+          {errors.password && <p className="text-sm text-destructive mt-1">{errors.password.message}</p>}
+        </div>
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>

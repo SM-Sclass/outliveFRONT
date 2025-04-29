@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
       name: patientBody.name,
       email: patientBody.email,
       phone: patientBody.phone,
+      password: patientBody.password,
       address: patientBody.address,
       age: patientBody.age,
       gender: patientBody.gender,

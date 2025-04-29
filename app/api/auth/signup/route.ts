@@ -4,7 +4,7 @@ export async function POST(request: NextRequest) {
     try {
         const { email, password, name, phone } = await request.json();
 
-        const response = await fetch(`${process.env.NEST_ENDPOINT}/auth/signup`, {
+        const response = await fetch(`${process.env.NEST_ENDPOINT}/patient/signup`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
